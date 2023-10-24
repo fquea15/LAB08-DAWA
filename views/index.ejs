@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD de Usuarios</title>
+    <!-- Agregar enlaces a los estilos de Materialize -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        /* Tus estilos personalizados aquí */
+        .modal {
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .table-container {
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .table th,
+        .table td {
+            text-align: center;
+        }
+
+        .fixed-header thead {
+            position: sticky;
+            top: 0;
+            background-color: #fff;
+        }
+
+        .table-container table thead th {
+            position: sticky;
+            top: 0;
+            background-color: #fff;
+            z-index: 1;
+        }
+
+        /* Nuevos estilos para el botón de editar */
+        .btn-edit {
+            background-color: #2196F3;
+        }
+
+        /* Nuevos estilos para el botón de eliminar */
+        .btn-delete {
+            background-color: #FF5722;
+        }
+
+        .modalEditar {
+            max-width: 500px;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Lista de Usuarios</h2>
+        <% if (errors && errors.length > 0) { %>
+        <div class="card-panel red white-text">
+            <ul>
+                <% errors.forEach(error => { %>
+                <li><%= error.msg %></li>
+                <% }) %>
+
+            </ul>
+        </div>
+        <% } %>
+        <a id="btnAgregarUsuario" class="waves-effect waves-light btn btn-add modal-trigger"
+            href="#modalAgregar">Agregar Usuario</a>
+
+        <!-- Modal Agregar Usuario -->
+        <div id="modalAgregar" class="modal">
+            <div class="modal-content">
+                <h4>Agregar Usuario</h4>
+                <form action="/users" method="POST">
+                    <div class="input-field">
+                        <i class="material-icons prefix">person</i>
+                        <input type="text" id="name" name="name">
+                        <label for="name">Nombre</label>
+                    </div>
+                    <div class="input-field">
+                        <i class="material-icons prefix">email</i>
+                        <input type="email" id="email" name="email">
+                        <label for="email">Email</label>
+                    </div>
+                    <div class="input-field">
+                        <i class="material-icons prefix">lock</i>
+                        <input type="password" id="password" name="password">
+                        <label for="password">Contraseña</label>
+                    </div>
+                    <button class="btn waves-effect waves-light" type="submit">Crear Usuario</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="modal-close waves-effect waves-green btn-flat">Cancelar</a>
+            </div>
+        </div>
+        <hr>
+        <div class="table-container">
+            <table class="table striped">
+                <!-- Encabezado de la tabla -->
+                <thead class="fixed-header">
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Email</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Iteración sobre los usuarios -->
+                    <% users.forEach((user) => { %>
+                    <tr>
+                        <td><%= user.name %></td>
+                        <td><%= user.email %></td>
+                        <td>
+                            <a class="waves-effect waves-light btn modal-trigger btn-edit"
+                                href="#modalEditar<%= user._id %>"><i class="material-icons white-text">edit</i></a>
+                            <a href="/users/delete/<%= user._id %>"
+                                class="btn-delete btn-floating waves-effect waves-light"><i
+                                    class="material-icons white-text">delete</i></a>
+                        </td>
+                    </tr>
+                    <!-- Inclusión del modal de edición -->
+                    <%- include('./partials/edit.ejs', { user: user }) %>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Agregar enlaces a los scripts de Materialize -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var modals = document.querySelectorAll('.modal');
+            var modalAgregar = M.Modal.init(modals[0]);
+
+            // Agregar el evento para abrir manualmente el modal
+            document.getElementById('btnAgregarUsuario').addEventListener('click', function (event) {
+                event.preventDefault();
+                modalAgregar.open();
+            });
+        });
+    </script>
+
+</body>
+
+</html>
